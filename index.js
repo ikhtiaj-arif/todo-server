@@ -99,6 +99,15 @@ app.put('/todo/:id',  async(req, res)=>{
 })
 
 
+// delete todo
+// verifyJWT, 
+app.delete('/todo/:id', async(req, res)=>{
+    const id = req.params.id;
+    const filter = { _id : new ObjectId(id)}
+    const result = await todosCollection.deleteOne(filter)
+    console.log(filter, result)
+    res.send(result)
+})
 
 
 
