@@ -55,7 +55,7 @@ app.put('/users/:email', async(req, res)=>{
     const result = await usersCollection.updateOne(filter, updatedDoc, option);
 
     const token = jwt.sign(user, process.env.TOKEN_SECRET, {expiresIn: '1d'});
-    console.log(result);
+    // console.log(result);
     res.send({user, token})
 })
 // get user
@@ -67,16 +67,16 @@ app.get('/users', async(req, res) => {
 
 // post todos 
 // verifyJWT,
-app.post('/todo', async(req, res)=>{
+app.post('/todo',verifyJWT, async(req, res)=>{
     const todo = req.body;
-    console.log(req.body);
+    // console.log(req.body);
     const result = await todosCollection.insertOne(todo);
     res.send(result)
 })
 
 // find todo by user email
 // verifyJWT
-app.get('/todos',  async(req, res)=> {
+app.get('/todos',verifyJWT,  async(req, res)=> {
     const email = req.query.email;
     const query = {email: email};
     const result = await todosCollection.find(query).toArray();
@@ -85,10 +85,10 @@ app.get('/todos',  async(req, res)=> {
 
 // update todo by id
 // verifyJWT,
-app.put('/todo/:id',  async(req, res)=>{
+app.put('/todo/:id', verifyJWT, async(req, res)=>{
     const id = req.params.id;
     const data = req.body;
-    console.log(data);
+    // console.log(data);
     const filter = { _id: new ObjectId(id) };
     const option = { upsert: true };
     const updatedDoc = {
@@ -101,11 +101,11 @@ app.put('/todo/:id',  async(req, res)=>{
 
 // delete todo
 // verifyJWT, 
-app.delete('/todo/:id', async(req, res)=>{
+app.delete('/todo/:id', verifyJWT, async(req, res)=>{
     const id = req.params.id;
     const filter = { _id : new ObjectId(id)}
     const result = await todosCollection.deleteOne(filter)
-    console.log(filter, result)
+    // console.log(filter, result)
     res.send(result)
 })
 
