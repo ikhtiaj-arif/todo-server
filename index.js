@@ -42,12 +42,7 @@ async function run() {
         const todosCollection = client.db('todo').collection('todos')
 
 
-        app.get('/users', async(req, res) => {
-            const query = {role: null};
-            const result = await usersCollection.find(query).toArray();
-            res.send(result)
-        })
-
+    
 // set or update user to database  
 app.put('/users/:email', async(req, res)=>{
     const user = req.body;
@@ -63,7 +58,46 @@ app.put('/users/:email', async(req, res)=>{
     console.log(result);
     res.send({user, token})
 })
-// get all
+// get user
+app.get('/users', async(req, res) => {
+    const query = {role: null};
+    const result = await usersCollection.find(query).toArray();
+    res.send(result)
+})
+
+// post todos 
+// verifyJWT,
+app.post('/todo', async(req, res)=>{
+    const todo = req.body;
+    console.log(req.body);
+    const result = await todosCollection.insertOne(todo);
+    res.send(result)
+})
+
+// find todo by user email
+// verifyJWT
+app.get('/todos',  async(req, res)=> {
+    const email = req.query.email;
+    const query = {email: email};
+    const result = await todosCollection.find(query).toArray();
+    res.send(result)
+})
+
+// update todo by id
+// verifyJWT,
+app.put('/todo/:id',  async(req, res)=>{
+    const id = req.params.id;
+    const data = req.body;
+    console.log(data);
+    const filter = { _id: new ObjectId(id) };
+    const option = { upsert: true };
+    const updatedDoc = {
+        $set: data
+    }
+    const result =await todosCollection.updateOne(filter, updatedDoc, option)
+    res.send(result) 
+})
+
 
 
 
